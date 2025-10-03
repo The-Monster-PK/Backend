@@ -10,6 +10,9 @@ namespace MonsterPKAPI.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<CharacterModel> CharacterModels { get; set; }
+        public DbSet<StarterRegion> StarterRegions { get; set; }
+        public DbSet<StarterPokemon> StarterPokemons { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

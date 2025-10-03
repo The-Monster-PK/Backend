@@ -6,6 +6,6 @@ namespace MonsterPKAPI.Services
     {
         Task<AuthResponseDto> RegisterAsync(RegisterRequestDto request);
         Task<AuthResponseDto> LoginAsync(LoginRequestDto request);
-        string GenerateJwtToken(string userId, string username, string email);
+        string GenerateJwtToken(string userId, string username, string email, string role);
     }
 }

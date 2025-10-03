@@ -91,26 +91,5 @@ namespace MonsterPKAPI.Controllers
                 Token = result.Token
             });
         }
-
-        /// <summary>
-        /// Test endpoint to verify JWT authentication
-        /// </summary>
-        /// <returns>User info from token</returns>
-        [HttpGet("me")]
-        [Authorize]
-        public ActionResult<object> GetCurrentUser()
-        {
-            var userId = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-            var username = User.FindFirst(System.Security.Claims.ClaimTypes.Name)?.Value;
-            var email = User.FindFirst(System.Security.Claims.ClaimTypes.Email)?.Value;
-
-            return Ok(new
-            {
-                userId,
-                username,
-                email,
-                message = "Authenticated successfully"
-            });
-        }
     }
 }

@@ -75,14 +75,15 @@ namespace MonsterPKAPI.Services
                     CreatedAt = DateTime.Now,
                     GameVersion = "1.0.0",
                     EmailVerified = false,
-                    TwoFactorEnabled = false
+                    TwoFactorEnabled = false,
+                    Role = "Player" // Default role for new users
                 };
 
                 _context.Users.Add(newUser);
                 await _context.SaveChangesAsync();
 
-                // Generate JWT token
-                var token = GenerateJwtToken(newUser.UserId, newUser.Username, newUser.Email);
+                // Generate JWT token with role
+                var token = GenerateJwtToken(newUser.UserId, newUser.Username, newUser.Email, newUser.Role);
 
                 return new AuthResponseDto
                 {
@@ -164,22 +165,15 @@ namespace MonsterPKAPI.Services
                 user.LastSave = DateTime.Now;
                 await _context.SaveChangesAsync();
 
-                // Generate JWT token
-                var token = GenerateJwtToken(user.UserId, user.Username, user.Email);
+                // Generate JWT token with role
+                var token = GenerateJwtToken(user.UserId, user.Username, user.Email, user.Role);
 
                 return new AuthResponseDto
                 {
                     Success = true,
                     Message = "Login successful",
-                    Token = token,
-                    User = new UserInfoDto
-                    {
-                        UserId = user.UserId,
-                        Username = user.Username,
-                        Email = user.Email,
-                        DisplayName = user.DisplayName,
-                        CreatedAt = user.CreatedAt
-                    }
+                    Token = token
+                    // Remove User info to keep response compact
                 };
             }
             catch (Exception ex)
@@ -193,7 +187,7 @@ namespace MonsterPKAPI.Services
             }
         }
 
-        public string GenerateJwtToken(string userId, string username, string email)
+        public string GenerateJwtToken(string userId, string username, string email, string role)
         {
             var jwtKey = _configuration["Jwt:Key"];
             var jwtIssuer = _configuration["Jwt:Issuer"];
@@ -207,12 +201,12 @@ namespace MonsterPKAPI.Services
             var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey));
             var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
 
+            // Minimize claims to reduce token size
             var claims = new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, userId),
                 new Claim(ClaimTypes.Name, username),
-                new Claim(ClaimTypes.Email, email),
-                new Claim(JwtRegisteredClaimNames.Sub, userId),
+                new Claim(ClaimTypes.Role, role), // Add role for authorization
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };
 
@@ -220,7 +214,7 @@ namespace MonsterPKAPI.Services
                 issuer: jwtIssuer,
                 audience: jwtAudience,
                 claims: claims,
-                expires: DateTime.Now.AddDays(7), // Token valid for 7 days
+                expires: DateTime.Now.AddHours(24), // Reduced to 24 hours for shorter token
                 signingCredentials: credentials
             );
 

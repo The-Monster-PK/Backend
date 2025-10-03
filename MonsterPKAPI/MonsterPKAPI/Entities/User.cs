@@ -34,6 +34,21 @@ namespace MonsterPKAPI.Entities
         [StringLength(100)]
         public string? DisplayName { get; set; }
 
+        [Column("gender")]
+        [StringLength(10)]
+        public string? Gender { get; set; } // "Male" or "Female"
+
+        [Column("character_model_id")]
+        [StringLength(20)]
+        public string? CharacterModelId { get; set; }
+
+        [Column("starter_region_id")]
+        [StringLength(20)]
+        public string? StarterRegionId { get; set; }
+
+        [Column("has_completed_tutorial")]
+        public bool HasCompletedTutorial { get; set; } = false;
+
         [Column("current_location")]
         [StringLength(20)]
         public string? CurrentLocation { get; set; }
@@ -82,5 +97,10 @@ namespace MonsterPKAPI.Entities
         [Column("game_version")]
         [StringLength(10)]
         public string GameVersion { get; set; } = "1.0.0";
+
+        [Required]
+        [Column("role")]
+        [StringLength(20)]
+        public string Role { get; set; } = "Player"; // Player or Admin
     }
 }
