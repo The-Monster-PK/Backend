@@ -1,4 +1,5 @@
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel;
 
 namespace MonsterPKAPI.DTOs
 {
@@ -6,10 +7,12 @@ namespace MonsterPKAPI.DTOs
     {
         [Required(ErrorMessage = "Username or Email is required")]
         [StringLength(100, ErrorMessage = "Username or Email cannot exceed 100 characters")]
+        [DefaultValue("string")]
         public string UsernameOrEmail { get; set; } = string.Empty;
 
         [Required(ErrorMessage = "Password is required")]
         [StringLength(100, MinimumLength = 6, ErrorMessage = "Password must be between 6 and 100 characters")]
+        [DefaultValue("string")]
         public string Password { get; set; } = string.Empty;
     }
 }
